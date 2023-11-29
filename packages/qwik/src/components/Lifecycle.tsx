@@ -1,10 +1,9 @@
 import {
   component$,
   Slot,
-  useVisibleTask$,
   type PublicProps,
   type JSXNode,
-  type QRL,
+  type QRL, useTask$,
 } from '@builder.io/qwik';
 import type { JSX } from '@builder.io/qwik/jsx-runtime';
 import { reset } from '../methods';
@@ -24,6 +23,7 @@ import type {
   ValidateFieldArray,
 } from '../types';
 import { getUniqueId, updateFormState } from '../utils';
+import {isBrowser} from "@builder.io/qwik/build";
 
 /**
  * Value type of the lifecycle properties.
@@ -85,7 +85,7 @@ export const Lifecycle: <
     TFieldArrayName
   >): JSX.Element => {
     // TODO: Switch back to `useTask$` once issue #3193 is fixed
-    useVisibleTask$(({ cleanup }) => {
+    useTask$(({ cleanup }) => {
       // Add validation functions
       store.internal.validate = validate
         ? Array.isArray(validate)
@@ -118,7 +118,7 @@ export const Lifecycle: <
 
       // On cleanup, remove consumer from field
       cleanup(() =>
-        setTimeout(() => {
+        isBrowser && setTimeout(() => {
           store.internal.consumers.splice(
             store.internal.consumers.indexOf(consumer),
             1
